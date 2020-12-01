@@ -1,0 +1,21 @@
+{
+    "name": "antfroger/progressive",
+    "description": "The library to progressively, quickly and simply enables new features",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Antoine Froger",
+            "email": "antfroger@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {"Progressive\\": "src/"}
+    },
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    },
+    "minimum-stability": "stable"
+}
