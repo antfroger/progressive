@@ -146,7 +146,9 @@ It's nothing more that an user-defined databag.
 You can use to improve our previous example of custom rule:
 
 ```php
-$context = (new Context())->add('env', getenv('ENV') ?: 'PROD');
+$context = new Context([
+    'env' => getenv('ENV') ?: 'PROD'
+]);
 $config = [
     'features' => [
         'homepage-v123'  => [
