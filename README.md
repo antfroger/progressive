@@ -227,4 +227,4 @@ You may also want to store the configuration in a database and pass it as an arr
 
 ---
 
-*Inspired by @lacallarec's [Banderole](https://github.com/lcallarec/banderole)*
+*Inspired by [Laurent Callarec](https://github.com/lcallarec)'s javascript feature-flag library [Banderole](https://github.com/lcallarec/banderole)*
