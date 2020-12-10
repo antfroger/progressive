@@ -45,7 +45,7 @@ class Context implements ParameterBagInterface
     {
         if (!$this->has($name)) {
             throw new ParameterNotFoundException(
-                sprintf('Parameter "%name" does not exist in Context', $name)
+                sprintf('Parameter "%s" does not exist in Context', $name)
             );
         }
 
