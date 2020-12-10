@@ -4,20 +4,36 @@ declare(strict_types=1);
 
 namespace Progressive;
 
+use Progressive\ParameterBagInterface;
+use Progressive\Rule\RuleInterface;
+use Progressive\Rule\RuleStoreInterface;
+
 class Progressive
 {
     /** @var array An array of the features' configuration */
     private $features = [];
 
+    /** @var ParameterBagInterface */
+    private $context;
+
+    /** @var RuleStoreInterface */
+    private $store;
+
     /**
-     * @param  array $config
-     * @return void
+     * @param  array                 $config
+     * @param  ParameterBagInterface $context
+     * @param  RuleStoreInterface    $store
      */
-    public function __construct(array $config)
-    {
+    public function __construct(
+        array $config,
+        ParameterBagInterface $context,
+        RuleStoreInterface $store
+    ) {
         $this->validateConfig($config);
 
         $this->features = $config['features'];
+        $this->context  = $context;
+        $this->store    = $store;
     }
 
     /**
@@ -30,18 +46,40 @@ class Progressive
             return false;
         }
 
-        // Short syntax of `enabled`
-        if (is_bool($this->features[$feature])) {
-            return $this->features[$feature];
+        $rules = $this->features[$feature];
+
+        // Short syntax
+        if (is_bool($rules)) {
+            return $rules;
         }
 
-        // @todo externalize this
-        // This method must not be modified
-        if (array_key_exists('enabled', $this->features[$feature]) && is_bool($this->features[$feature]['enabled'])) {
-            return $this->features[$feature]['enabled'];
+        if (is_array($rules) && !empty($rules)) {
+            $ruleParams = reset($rules);
+            $ruleName   = key($rules);
+
+            if ($this->store->exists($ruleName)) {
+                /** @var RuleInterface|callable */
+                $rule = $this->store->get($ruleName);
+
+                if ($rule instanceof RuleInterface) {
+                    return $rule->decide($this->context, $ruleParams);
+                } elseif (is_callable($rule)) {
+                    return $rule($this->context, $ruleParams);
+                }
+            }
         }
 
         return false;
+    }
+
+    /**
+     * @param  string                 $name
+     * @param  callable|RuleInterface $func
+     * @return void
+     */
+    public function addCustomRule(string $name, $func)
+    {
+        $this->store->add($name, $func);
     }
 
     /**

@@ -22,7 +22,7 @@ $config      = [
         'call-center' => false,
     ]
 ];
-$progressive = new Progressive($config);
+$progressive = new Progressive($config, new Context(), new RuleStore(['enabled' => new Enabled()]));
 $progressive->isEnabled('dark-theme');    // true
 $progressive->isEnabled('call-center');   // false
 ```
@@ -72,15 +72,13 @@ $config = [
         ]
     ]
 ];
-
-$progressive = new Progressive($config);
-$progressive->addCustomRule(
-    'env',
-    function(Context $context, array $envs) {
+$rules = new RuleStore([
+    'env' => function (Context $context, array $envs) {
         return in_array(getenv('ENV'), $envs);
-    }
-);
+    },
+]);
 
+$progressive = new Progressive($config, new Context(), $rules);
 $progressive->isEnabled('homepage-v123'); // Returns true if getenv('ENV') is DEV or PREPROD, otherwise returns false
 ```
 
@@ -152,9 +150,6 @@ It's nothing more that an user-defined databag.
 You can use to improve our previous example of custom rule:
 
 ```php
-$context = new Context([
-    'env' => getenv('ENV') ?: 'PROD'
-]);
 $config = [
     'features' => [
         'homepage-v123'  => [
@@ -162,20 +157,21 @@ $config = [
         ]
     ]
 ];
-
-$progressive = new Progressive($config, $context);
-$progressive->addCustomRule(
-    'env',
-    function(Context $context, array $envs) {
+$context = new Context([
+    'env' => getenv('ENV') ?: 'PROD'
+]);
+$rules = new RuleStore([
+    'env' => function (Context $context, array $envs) {
         return in_array($context->get('env'), $envs);
-    }
-);
+    },
+]);
+
+$progressive = new Progressive($config, $context, $rules);
 ```
 
 Another common example is to store the current user in the context:
 
 ```php
-$context = (new Context())->add('user', $user);
 $config = [
     'features' => [
         'homepage-v123'  => [
@@ -183,11 +179,9 @@ $config = [
         ]
     ]
 ];
-
-$progressive = new Progressive($config, $context);
-$progressive->addCustomRule(
-    'roles',
-    function(Context $context, array $roles) {
+$context = new Context(['user' => $user]);
+$rules = new RuleStore([
+    'roles' => function (Context $context, array $roles) {
         $userRoles = $context->get('user')->getRoles();
         foreach ($roles as $role) {
             if (in_array($role, $userRoles) {
@@ -197,7 +191,9 @@ $progressive->addCustomRule(
 
         return false;
     }
-);
+]);
+
+$progressive = new Progressive($config, $context, $rules);
 ```
 
 ## Requesting a non-existing flag
@@ -210,7 +206,7 @@ $config = [
     'features' => []
 ];
 
-$progressive = new Progressive($config);
+$progressive = new Progressive($config, new Context(), new RuleStore());
 $progressive->isEnabled('dark-theme'); // false
 ```
 
@@ -223,7 +219,7 @@ In this example, we use the Symfony Yaml component to read the config from a YAM
 use Symfony\Component\Yaml\Yaml;
 
 $config = Yaml::parseFile('/path/to/your/config/file.yaml');
-$progressive = new Progressive($config);
+$progressive = new Progressive($config, new Context(), new RuleStore(['enabled' => new Enabled()]));
 $progressive->isEnabled('new-feature'); // false
 ```
 
