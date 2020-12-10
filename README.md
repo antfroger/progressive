@@ -7,6 +7,12 @@ Thanks to Progressive, you can **progressively**, **quickly** and **simply** ena
 [![Build Status](https://travis-ci.org/antfroger/progressive.svg?branch=master)](https://travis-ci.org/antfroger/progressive)
 [![Latest Stable Version](https://poser.pugx.org/antfroger/progressive/v/stable.png)](https://packagist.org/packages/antfroger/progressive "Latest Stable Version")
 
+## Installation
+
+```bash
+    composer require antfroger/progressive
+```
+
 ## Usage
 
 ```php
@@ -229,4 +235,4 @@ You may also want to store the configuration in a database and pass it as an arr
 
 ---
 
-*Inspired by @lacallarec's [Banderole](https://github.com/lcallarec/banderole)*
+*Inspired by [Laurent Callarec](https://github.com/lcallarec)'s javascript feature-flag library [Banderole](https://github.com/lcallarec/banderole)*
