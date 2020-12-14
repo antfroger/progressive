@@ -5,8 +5,6 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Progressive\Context;
 use Progressive\Progressive;
-use Progressive\Rule\Enabled;
-use Progressive\Rule\RuleStore;
 
 final class ProgressiveTest extends TestCase
 {
@@ -14,11 +12,9 @@ final class ProgressiveTest extends TestCase
     {
         $this->assertInstanceOf(
             Progressive::class,
-            new Progressive(
-                ['features' => []],
-                new Context(),
-                new RuleStore()
-            )
+            new Progressive([
+                'features' => []
+            ])
         );
     }
 
@@ -26,64 +22,51 @@ final class ProgressiveTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Progressive([], new Context(), new RuleStore());
+        new Progressive([]);
     }
 
     public function testFeaturesKeyNotDefinedInConfig(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Progressive(
-            ['my-key' => []],
-            new Context(),
-            new RuleStore()
-        );
+        new Progressive([
+            'my-key' => []
+        ]);
     }
 
     public function testTwoManyKeysInConfig(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new Progressive(
-            [
-                'features' => [],
-                'more-keys',
-            ],
-            new Context(),
-            new RuleStore()
-        );
+        new Progressive([
+            'features' => [],
+            'more-keys',
+        ]);
     }
 
     public function testFeatureNotExists(): void
     {
-        $progressive = new Progressive(
-            ['features' => []],
-            new Context(),
-            new RuleStore()
-        );
+        $progressive = new Progressive([
+            'features' => []
+        ]);
 
         $this->assertSame($progressive->isEnabled('awesome-feature'), false);
     }
 
     public function testBuiltinRuleEnabled(): void
     {
-        $progressive = new Progressive(
-            [
-                'features' => [
-                    'feature-1-enabled' => true,
-                    'feature-2-disabled' => false,
-                    'feature-3-enabled' => [
-                        'enabled' => true,
-                    ],
-                    'feature-4-disabled' => [
-                        'enabled' => false,
-                    ],
+        $progressive = new Progressive([
+            'features' => [
+                'feature-1-enabled' => true,
+                'feature-2-disabled' => false,
+                'feature-3-enabled' => [
+                    'enabled' => true,
+                ],
+                'feature-4-disabled' => [
+                    'enabled' => false,
                 ],
             ],
-            new Context(),
-            new RuleStore()
-        );
-        $progressive->addCustomRule('enabled', new Enabled());
+        ]);
 
         $this->assertSame($progressive->isEnabled('feature-1-enabled'), true);
         $this->assertSame($progressive->isEnabled('feature-2-disabled'), false);
@@ -113,8 +96,7 @@ final class ProgressiveTest extends TestCase
                     ],
                 ],
             ],
-            new Context(['env' => 'DEV', 'role' => 'ADMIN']),
-            new RuleStore()
+            new Context(['env' => 'DEV', 'role' => 'ADMIN'])
         );
 
         $progressive->addCustomRule(

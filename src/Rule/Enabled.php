@@ -7,6 +7,8 @@ use Progressive\Rule\RuleInterface;
 
 class Enabled implements RuleInterface
 {
+    public const NAME = "enabled";
+
     /**
      * {@inheritdoc}
      */

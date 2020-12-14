@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Progressive;
 
 use Progressive\ParameterBagInterface;
+use Progressive\Rule\Enabled;
 use Progressive\Rule\RuleInterface;
+use Progressive\Rule\RuleStore;
 use Progressive\Rule\RuleStoreInterface;
 
 class Progressive
@@ -17,23 +19,23 @@ class Progressive
     private $context;
 
     /** @var RuleStoreInterface */
-    private $store;
+    private $rules;
 
     /**
-     * @param  array                 $config
-     * @param  ParameterBagInterface $context
-     * @param  RuleStoreInterface    $store
+     * @param array                  $config
+     * @param ParameterBagInterface  $context
      */
     public function __construct(
         array $config,
-        ParameterBagInterface $context,
-        RuleStoreInterface $store
+        ParameterBagInterface $context = null
     ) {
         $this->validateConfig($config);
 
         $this->features = $config['features'];
-        $this->context  = $context;
-        $this->store    = $store;
+        $this->context  = $context ?: new Context();
+
+        $this->rules = new RuleStore();
+        $this->rules->add(Enabled::NAME, new Enabled());
     }
 
     /**
@@ -57,9 +59,9 @@ class Progressive
             $ruleParams = reset($rules);
             $ruleName   = key($rules);
 
-            if ($this->store->exists($ruleName)) {
+            if ($this->rules->exists($ruleName)) {
                 /** @var RuleInterface|callable */
-                $rule = $this->store->get($ruleName);
+                $rule = $this->rules->get($ruleName);
 
                 if ($rule instanceof RuleInterface) {
                     return $rule->decide($this->context, $ruleParams);
@@ -79,7 +81,7 @@ class Progressive
      */
     public function addCustomRule(string $name, $func)
     {
-        $this->store->add($name, $func);
+        $this->rules->add($name, $func);
     }
 
     /**

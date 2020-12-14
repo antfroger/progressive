@@ -16,15 +16,30 @@ Thanks to Progressive, you can **progressively**, **quickly** and **simply** ena
 ## Usage
 
 ```php
-$config      = [
+// From a file
+$config = \Symfony\Component\Yaml\Yaml::parseFile('/your-own-config-file.yaml');
+// Content of /your-own-config-file.yaml
+// features:
+//   dark-theme: true
+//   call-center: false
+//   homepage-v2:
+//     enabled: true
+
+// Or from a PHP array
+$config = [
     'features' => [
         'dark-theme'  => true,
         'call-center' => false,
+        'homepage-v2' => [
+            'enabled' => true
+        ],
     ]
 ];
-$progressive = new Progressive($config, new Context(), new RuleStore(['enabled' => new Enabled()]));
+
+$progressive = new Progressive($config);
 $progressive->isEnabled('dark-theme');    // true
 $progressive->isEnabled('call-center');   // false
+$progressive->isEnabled('homepage-v2');   // true
 ```
 
 ## Rules
@@ -38,7 +53,7 @@ The value is meant to be a boolean, `true|false`.
 
 ```php
 // Short
-$config      = [
+$config = [
     'features' => [
         'dark-theme' => true
     ]
@@ -72,14 +87,13 @@ $config = [
         ]
     ]
 ];
-$rules = new RuleStore([
-    'env' => function (Context $context, array $envs) {
-        return in_array(getenv('ENV'), $envs);
-    },
-]);
+$progressive = new Progressive($config);
 
-$progressive = new Progressive($config, new Context(), $rules);
-$progressive->isEnabled('homepage-v123'); // Returns true if getenv('ENV') is DEV or PREPROD, otherwise returns false
+$progressive->addCustomRule('env', function (Context $context, array $envs) {
+    return in_array(getenv('ENV'), $envs);
+});
+
+$progressive->isEnabled('homepage-v123'); // Returns true if ENV is DEV or PREPROD, otherwise returns false
 ```
 
 (this lambda can be improved thanks to the `Context object` - more about it [here](#context-object))
@@ -147,9 +161,13 @@ But you may want to use your logic inside custom rules.
 In that case, the context object is your friend!  
 It's nothing more that an user-defined databag.
 
-You can use to improve our previous example of custom rule:
+You can use it to improve our previous custom rule:
 
 ```php
+$context = new Context([
+    'env' => getenv('ENV') ?: 'PROD'
+]);
+
 $config = [
     'features' => [
         'homepage-v123'  => [
@@ -157,21 +175,18 @@ $config = [
         ]
     ]
 ];
-$context = new Context([
-    'env' => getenv('ENV') ?: 'PROD'
-]);
-$rules = new RuleStore([
-    'env' => function (Context $context, array $envs) {
-        return in_array($context->get('env'), $envs);
-    },
-]);
 
-$progressive = new Progressive($config, $context, $rules);
+$progressive = new Progressive($config, $context);
+$progressive->addCustomRule('env', function (Context $context, array $envs) {
+    return in_array($context->get('env'), $envs);
+});
 ```
 
 Another common example is to store the current user in the context:
 
 ```php
+$context = new Context(['user' => $user]);
+
 $config = [
     'features' => [
         'homepage-v123'  => [
@@ -179,21 +194,18 @@ $config = [
         ]
     ]
 ];
-$context = new Context(['user' => $user]);
-$rules = new RuleStore([
-    'roles' => function (Context $context, array $roles) {
-        $userRoles = $context->get('user')->getRoles();
-        foreach ($roles as $role) {
-            if (in_array($role, $userRoles) {
-                return true;
-            }
+
+$progressive = new Progressive($config, $context);
+$progressive->addCustomRule('roles', function (Context $context, array $roles) {
+    $userRoles = $context->get('user')->getRoles();
+    foreach ($roles as $role) {
+        if (in_array($role, $userRoles) {
+            return true;
         }
-
-        return false;
     }
-]);
 
-$progressive = new Progressive($config, $context, $rules);
+    return false;
+});
 ```
 
 ## Requesting a non-existing flag
@@ -206,7 +218,7 @@ $config = [
     'features' => []
 ];
 
-$progressive = new Progressive($config, new Context(), new RuleStore());
+$progressive = new Progressive($config);
 $progressive->isEnabled('dark-theme'); // false
 ```
 
@@ -219,7 +231,7 @@ In this example, we use the Symfony Yaml component to read the config from a YAM
 use Symfony\Component\Yaml\Yaml;
 
 $config = Yaml::parseFile('/path/to/your/config/file.yaml');
-$progressive = new Progressive($config, new Context(), new RuleStore(['enabled' => new Enabled()]));
+$progressive = new Progressive($config);
 $progressive->isEnabled('new-feature'); // false
 ```
 
