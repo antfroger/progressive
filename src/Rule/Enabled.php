@@ -7,13 +7,19 @@ use Progressive\Rule\RuleInterface;
 
 class Enabled implements RuleInterface
 {
-    public const NAME = "enabled";
-
     /**
      * {@inheritdoc}
      */
     public function decide(ParameterBagInterface $bag, bool $value = false):bool
     {
         return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName():string
+    {
+        return "enabled";
     }
 }

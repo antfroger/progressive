@@ -35,7 +35,7 @@ class Progressive
         $this->context  = $context ?: new Context();
 
         $this->rules = new RuleStore();
-        $this->rules->add(Enabled::NAME, new Enabled());
+        $this->rules->add(new Enabled());
     }
 
     /**
@@ -60,14 +60,8 @@ class Progressive
             $ruleName   = key($rules);
 
             if ($this->rules->exists($ruleName)) {
-                /** @var RuleInterface|callable */
                 $rule = $this->rules->get($ruleName);
-
-                if ($rule instanceof RuleInterface) {
-                    return $rule->decide($this->context, $ruleParams);
-                } elseif (is_callable($rule)) {
-                    return $rule($this->context, $ruleParams);
-                }
+                return $rule->decide($this->context, $ruleParams);
             }
         }
 
@@ -75,13 +69,13 @@ class Progressive
     }
 
     /**
-     * @param  string                 $name
-     * @param  callable|RuleInterface $func
+     * @param  string   $name
+     * @param  callable $func
      * @return void
      */
-    public function addCustomRule(string $name, $func)
+    public function addCustomRule(string $name, callable $func)
     {
-        $this->rules->add($name, $func);
+        $this->rules->addCustom($name, $func);
     }
 
     /**

@@ -4,57 +4,68 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
+use Progressive\Rule\Custom;
 use Progressive\Rule\RuleInterface;
 use Progressive\Rule\RuleStore;
 
 final class RuleStoreTest extends TestCase
 {
-    public function testAddRulesThroughConstructor()
+    public function testAddRuleInterface()
     {
-        $callable = function () {
-            return true;
-        };
-        $ruleInterface = $this->createMock(RuleInterface::class);
+        $store = new RuleStore();
 
-        $store = new RuleStore([
-            'callable' => $callable,
-            'ruleinterface' => $ruleInterface
-        ]);
+        $rule = $this->createMock(RuleInterface::class);
+        $rule->expects($this->once())
+            ->method('getName')
+            ->willReturn('ruleinterface');
 
-        $this->assertSame($callable, $store->get('callable'));
-        $this->assertSame($ruleInterface, $store->get('ruleinterface'));
+        $store->add($rule);
+        $this->assertSame($rule, $store->get('ruleinterface'));
     }
 
-    public function testAddGetRule()
+    public function testAddCustomRule()
     {
         $store = new RuleStore();
 
         $callable = function () {
             return true;
         };
-        $store->add('callable', $callable);
-        $this->assertSame($callable, $store->get('callable'));
 
-        $ruleInterface = $this->createMock(RuleInterface::class);
-        $store->add('ruleinterface', $ruleInterface);
-        $this->assertSame($ruleInterface, $store->get('ruleinterface'));
+        $store->addCustom('callable', $callable);
+        $this->assertEquals(
+            new Custom('callable', $callable),
+            $store->get('callable')
+        );
     }
 
-    /**
-     * @dataProvider rulesProvider
-     */
-    public function testRuleTypes(string $name, $rule, bool $errorExpected)
+    public function testSameRuleInterfaceAddedTwice()
     {
-        if ($errorExpected) {
-            $this->expectException(\LogicException::class);
-        }
-
         $store = new RuleStore();
-        $store->add($name, $rule);
 
-        if (!$errorExpected) {
-            $this->assertSame($rule, $store->get($name));
-        }
+        $rule = $this->createMock(RuleInterface::class);
+        $rule->method('getName')
+            ->willReturn('ruleinterface');
+
+        $store->add($rule);
+
+        $this->expectException(\LogicException::class);
+        $store->add($rule);
+    }
+
+    public function testSameRuleAddedTwice()
+    {
+        $store = new RuleStore();
+
+        $rule = $this->createMock(RuleInterface::class);
+        $rule->method('getName')
+            ->willReturn('rule');
+
+        $store->add($rule);
+
+        $this->expectException(\LogicException::class);
+        $store->addCustom('rule', function () {
+            return true;
+        });
     }
 
     public function testRuleNotExists()
@@ -62,34 +73,10 @@ final class RuleStoreTest extends TestCase
         $this->expectException(RuleNotFoundException::class);
 
         $store = new RuleStore();
-        $store->add('env', function () {
+        $store->addCustom('env', function () {
             return true;
         });
+
         $store->get('unknown-rule');
-    }
-
-    public function rulesProvider()
-    {
-        return [
-            ['string', 'a-rule-cannot-be-a-string', true],
-            ['object', new DummyClass(), true],
-            ['int', 3, true],
-            ['number', 3.14, true],
-            [
-                'callable',
-                function () {
-                },
-                false
-            ],
-            ['rule', $this->createMock(RuleInterface::class), false],
-        ];
-    }
-}
-
-class DummyClass
-{
-    public function __toString()
-    {
-        return "This is a dummy class";
     }
 }

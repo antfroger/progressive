@@ -9,25 +9,35 @@ use Progressive\Exception\RuleNotFoundException;
 interface RuleStoreInterface
 {
     /**
-     * Adds rule.
+     * Adds a RuleInterface rule.
      *
-     * @param string                 $name The rule name.
-     * @param callable|RuleInterface $rule The rule function.
+     * @param RuleInterface $rule The RuleInterface object.
      * @return void
      *
-     * @throws \LogicException if the rule can not be added
+     * @throws \LogicException if the rule has already been added
      */
-    public function add(string $name, $rule):void;
+    public function add(RuleInterface $rule):void;
+
+    /**
+     * Adds a custom rule.
+     *
+     * @param string   $name The rule name.
+     * @param callable $rule The rule function.
+     * @return void
+     *
+     * @throws \LogicException if the rule has already been added
+     */
+    public function addCustom(string $name, callable $rule):void;
 
     /**
      * Gets a rule.
      *
-     * @param  string                 The rule name.
-     * @return callable|RuleInterface The rule.
+     * @param  string        The rule name.
+     * @return RuleInterface The rule.
      *
      * @throws RuleNotFoundException if the rule is not defined
      */
-    public function get(string $name);
+    public function get(string $name): RuleInterface;
 
     /**
      * Returns whether a rule is defined.

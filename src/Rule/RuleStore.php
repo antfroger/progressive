@@ -8,34 +8,37 @@ use Progressive\Exception\RuleNotFoundException;
 
 class RuleStore implements RuleStoreInterface
 {
-    /** @var array */
+    /** @var array<RuleInterface> */
     private $rules = [];
 
-    public function __construct(array $rules = [])
+    /**
+     * {@inheritdoc}
+     */
+    public function add(RuleInterface $rule):void
     {
-        foreach ($rules as $name => $rule) {
-            $this->add($name, $rule);
+        $ruleName = $rule->getName();
+        if ($this->exists($ruleName)) {
+            throw new \LogicException(sprintf(
+                'Rule"%s" already added. You cannot add the same rule twice',
+                $ruleName
+            ));
         }
+
+        $this->rules[$ruleName] = $rule;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function add(string $name, $rule):void
+    public function addCustom(string $name, callable $rule):void
     {
-        if (!is_callable($rule) && !$rule instanceof RuleInterface) {
-            throw new \LogicException(
-                sprintf('"%s" is not a callable nor a RuleInterface object', $rule)
-            );
-        }
-
-        $this->rules[$name] = $rule;
+        $this->add(new Custom($name, $rule));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function get(string $name)
+    public function get(string $name): RuleInterface
     {
         if (!$this->exists($name)) {
             throw new RuleNotFoundException(

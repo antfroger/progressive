@@ -1,0 +1,39 @@
+<?php
+
+namespace Progressive\Rule;
+
+use Progressive\ParameterBagInterface;
+use Progressive\Rule\RuleInterface;
+
+/**
+ * Rule used to create RuleInterface objects from custom rules
+ */
+class Custom implements RuleInterface
+{
+    /** @var string */
+    private $name;
+    /** @var callable */
+    private $fn;
+
+    public function __construct(string $name, callable $fn)
+    {
+        $this->name = $name;
+        $this->fn   = $fn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function decide(ParameterBagInterface $bag, ...$params):bool
+    {
+        return call_user_func($this->fn, $bag, ...$params);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName():string
+    {
+        return $this->name;
+    }
+}
