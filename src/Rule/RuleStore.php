@@ -42,7 +42,7 @@ class RuleStore implements RuleStoreInterface
     {
         if (!$this->exists($name)) {
             throw new RuleNotFoundException(
-                sprintf('"%s" does not exist in Context', $name)
+                sprintf('Rule "%s" does not exist in Context', $name)
             );
         }
 

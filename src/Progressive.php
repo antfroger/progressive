@@ -6,9 +6,12 @@ namespace Progressive;
 
 use Progressive\ParameterBagInterface;
 use Progressive\Rule\Enabled;
-use Progressive\Rule\RuleInterface;
 use Progressive\Rule\RuleStore;
 use Progressive\Rule\RuleStoreInterface;
+use Progressive\Strategy\Partial;
+use Progressive\Strategy\StrategyStore;
+use Progressive\Strategy\StrategyStoreInterface;
+use Progressive\Strategy\Unanimous;
 
 class Progressive
 {
@@ -20,6 +23,9 @@ class Progressive
 
     /** @var RuleStoreInterface */
     private $rules;
+
+    /** @var StrategyStoreInterface */
+    private $strategies;
 
     /**
      * @param array                  $config
@@ -36,6 +42,11 @@ class Progressive
 
         $this->rules = new RuleStore();
         $this->rules->add(new Enabled());
+        $this->context->set('rules', $this->rules);
+
+        $this->strategies = new StrategyStore();
+        $this->strategies->add(new Partial());
+        $this->strategies->add(new Unanimous());
     }
 
     /**
@@ -48,20 +59,30 @@ class Progressive
             return false;
         }
 
-        $rules = $this->features[$feature];
+        $config = $this->features[$feature];
 
-        // Short syntax
-        if (is_bool($rules)) {
-            return $rules;
+        // Short syntax: `enabled:true`
+        if (is_bool($config)) {
+            return $config;
         }
 
-        if (is_array($rules) && !empty($rules)) {
-            $ruleParams = reset($rules);
-            $ruleName   = key($rules);
+        // The feature's configuration is composed of a rule or rules within a strategy
+        if (is_array($config) && !empty($config)) {
+            reset($config);
+            $name = key($config);
 
-            if ($this->rules->exists($ruleName)) {
-                $rule = $this->rules->get($ruleName);
-                return $rule->decide($this->context, $ruleParams);
+            if ($this->strategies->exists($name)) {
+                $strategy = $this->strategies->get($name);
+                $rules    = $config[$name];
+                return $strategy->decide($this->context, $rules);
+            }
+
+            // No strategy defined
+            // The feature's configuration is only composed by one rule
+            if ($this->rules->exists($name)) {
+                $rule   = $this->rules->get($name);
+                $params = $config[$name];
+                return $rule->decide($this->context, $params);
             }
         }
 
