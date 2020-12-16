@@ -8,7 +8,15 @@ use Progressive\Progressive;
 
 final class ProgressiveTest extends TestCase
 {
-    public function testValidConfig(): void
+    /** @var array */
+    private static $defaultConfigFile;
+
+    public static function setUpBeforeClass(): void
+    {
+        self::$defaultConfigFile = require __DIR__ . '/feature-flag.php';
+    }
+
+    public function testConfigIsValid():void
     {
         $this->assertInstanceOf(
             Progressive::class,
@@ -18,104 +26,127 @@ final class ProgressiveTest extends TestCase
         );
     }
 
-    public function testEmptyConfig(): void
+    public function testEmptyConfigMustThrowAnException():void
     {
         $this->expectException(InvalidArgumentException::class);
-
         new Progressive([]);
     }
 
-    public function testFeaturesKeyNotDefinedInConfig(): void
+    public function testInvalidRootKeyInConfigMustThrowAnException():void
     {
         $this->expectException(InvalidArgumentException::class);
-
         new Progressive([
             'my-key' => []
         ]);
     }
 
-    public function testTwoManyKeysInConfig(): void
+    public function testTwoManyRootKeyInConfigMustThrowAnException():void
     {
         $this->expectException(InvalidArgumentException::class);
-
         new Progressive([
             'features' => [],
             'more-keys',
         ]);
     }
 
-    public function testFeatureNotExists(): void
+    public function testAFeatureThatNotExistsMustReturnFalse():void
     {
-        $progressive = new Progressive([
-            'features' => []
-        ]);
-
-        $this->assertSame($progressive->isEnabled('awesome-feature'), false);
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->assertSame($progressive->isEnabled('i-do-not-exist'), false);
     }
 
-    public function testBuiltinRuleEnabled(): void
+    public function testAFeatureThatNotConfiguredMustReturnFalse():void
     {
-        $progressive = new Progressive([
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->assertSame($progressive->isEnabled('i-am-not-configured'), false);
+    }
+
+    public function testBuiltInRuleEnabled():void
+    {
+        $progressive = new Progressive(self::$defaultConfigFile);
+
+        $this->assertSame($progressive->isEnabled('enabled-short-syntax'), true);
+        $this->assertSame($progressive->isEnabled('disabled-short-syntax'), false);
+        $this->assertSame($progressive->isEnabled('enabled-verbose-syntax'), true);
+        $this->assertSame($progressive->isEnabled('disabled-verbose-syntax'), false);
+    }
+
+    public function testCustomRulesCanBeAddedAndUsedAtRuntime():void
+    {
+        $progressive = new Progressive(['features' => [
+            'authorize' => ['custom-flag' => true],
+            'refuse' => ['custom-flag' => false]
+        ]]);
+
+        $progressive->addCustomRule('custom-flag', function (Context $context, bool $flag) {
+            return $flag;
+        });
+
+        $this->assertSame($progressive->isEnabled('authorize'), true);
+        $this->assertSame($progressive->isEnabled('refuse'), false);
+    }
+
+    public function testCustomRulesCanUseContext():void
+    {
+        $config = [
             'features' => [
-                'feature-1-enabled' => true,
-                'feature-2-disabled' => false,
-                'feature-3-enabled' => [
-                    'enabled' => true,
+                'everywhere-but-prod' => [
+                    'runtime-env' => ['DEV', 'TEST', 'PREPROD']
                 ],
-                'feature-4-disabled' => [
-                    'enabled' => false,
-                ],
-            ],
-        ]);
+            ]
+        ];
+        $context = new Context(['env' => 'DEV']);
 
-        $this->assertSame($progressive->isEnabled('feature-1-enabled'), true);
-        $this->assertSame($progressive->isEnabled('feature-2-disabled'), false);
-        $this->assertSame($progressive->isEnabled('feature-3-enabled'), true);
-        $this->assertSame($progressive->isEnabled('feature-4-disabled'), false);
+        $progressive = new Progressive($config, $context);
+
+        $progressive->addCustomRule('runtime-env', function (Context $context, array $envs):bool {
+            return in_array($context->get('env'), $envs);
+        });
+
+        $this->assertSame($progressive->isEnabled('everywhere-but-prod'), true);
     }
 
-    public function testCustomRule(): void
+    public function testStrategyUnanimousWithAllRulesTrueMustReturnTrue():void
     {
-        $progressive = new Progressive(
-            [
-                'features' => [
-                    'feature-1' => [
-                        'env' => ['DEV', 'PREPROD'],
-                    ],
-                    'feature-2' => [
-                        'env' => ['PROD'],
-                    ],
-                    'feature-3' => [
-                        'role' => 'ADMIN',
-                    ],
-                    'feature-4' => [
-                        'role' => 'DEV',
-                    ],
-                    'feature-5' => [
-                        'fake' => 'bla',
-                    ],
-                ],
-            ],
-            new Context(['env' => 'DEV', 'role' => 'ADMIN'])
-        );
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $this->assertSame($progressive->isEnabled('strategy-unanimous-all-true'), true);
+    }
 
-        $progressive->addCustomRule(
-            'env',
-            function (Context $context, array $envs) {
-                return in_array($context->get('env'), $envs);
-            }
-        );
-        $progressive->addCustomRule(
-            'role',
-            function (Context $context, $role) {
-                return $context->get('role') === $role;
-            }
-        );
+    public function testStrategyUnanimousWithAtLeastOneRuleFalseMustReturnFalse():void
+    {
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $this->assertSame($progressive->isEnabled('strategy-unanimous-one-false'), false);
+    }
 
-        $this->assertSame($progressive->isEnabled('feature-1'), true);
-        $this->assertSame($progressive->isEnabled('feature-2'), false);
-        $this->assertSame($progressive->isEnabled('feature-3'), true);
-        $this->assertSame($progressive->isEnabled('feature-4'), false);
-        $this->assertSame($progressive->isEnabled('feature-5'), false);
+    public function testStrategyPartialWithAtLeastOneRuleTrueMustReturnTrue():void
+    {
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $this->assertSame($progressive->isEnabled('strategy-partial-one-true'), true);
+    }
+
+    public function testStrategyPartialWithNoRulesTrueMustReturnFalse():void
+    {
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $this->assertSame($progressive->isEnabled('strategy-partial-all-false'), false);
+    }
+
+    private function addCustomRulesForStategyTests(Progressive $progressive):void
+    {
+        $progressive->addCustomRule('authorize', function (Context $context) {
+            return true;
+        });
+        $progressive->addCustomRule('refuse', function (Context $context) {
+            return false;
+        });
+        $progressive->addCustomRule('valid', function (Context $context) {
+            return true;
+        });
+        $progressive->addCustomRule('invalid', function (Context $context) {
+            return false;
+        });
     }
 }

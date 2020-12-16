@@ -26,18 +26,13 @@ final class StrategyStoreTest extends TestCase
         $this->store->add($this->mockStrategy);
     }
 
-    public function testGet():void
-    {
-        $this->assertSame($this->mockStrategy, $this->store->get('mock-strategy'));
-    }
-
-    public function testSameStrategyAddedTwice():void
+    public function testSameStrategyAddedTwiceMustThrowAnException():void
     {
         $this->expectException(\LogicException::class);
         $this->store->add($this->mockStrategy);
     }
 
-    public function testRuleNotExists():void
+    public function testRuleNotExistsMustThrowAnException():void
     {
         $this->expectException(StrategyNotFoundException::class);
         $this->store->get('unknown');
