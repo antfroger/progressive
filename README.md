@@ -100,11 +100,16 @@ $progressive->isEnabled('homepage-v123'); // Returns true if ENV is DEV or PREPR
 
 ## Strategies
 
-Rules are great but sometimes one rule id not enough to decide what to do.  
-You may want to enable a feature to the admins **AND** a given percentage of users.  
-Or you may want to enable a feature in `PROD` only for admins but to everyone in `PREPROD`.
+Rules are great but sometimes one rule is not enough to decide if a feature must be enabled.  
+You may want to enable a feature in `PROD` only for admins but to everyone in `DEV`, `TEST` and `PREPROD`.  
+Or you may want to enable a feature to the admins **AND** a given percentage of users.
 
 That's where strategies come into play!
+
+*(Strategies are simply another name for nested rules.  
+And as for rules, you can create your own strategies!)*
+
+Progressive comes with two built-in strategies:
 
 ### `unanimous: []`
 

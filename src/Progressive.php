@@ -7,12 +7,10 @@ namespace Progressive;
 use Progressive\Config\Validator;
 use Progressive\ParameterBagInterface;
 use Progressive\Rule\Enabled;
+use Progressive\Rule\Partial;
 use Progressive\Rule\RuleStore;
 use Progressive\Rule\RuleStoreInterface;
-use Progressive\Strategy\Partial;
-use Progressive\Strategy\StrategyStore;
-use Progressive\Strategy\StrategyStoreInterface;
-use Progressive\Strategy\Unanimous;
+use Progressive\Rule\Unanimous;
 
 class Progressive
 {
@@ -24,9 +22,6 @@ class Progressive
 
     /** @var RuleStoreInterface */
     private $rules;
-
-    /** @var StrategyStoreInterface */
-    private $strategies;
 
     /**
      * @param array                  $config
@@ -43,11 +38,9 @@ class Progressive
 
         $this->rules = new RuleStore();
         $this->rules->add(new Enabled());
+        $this->rules->add(new Partial());
+        $this->rules->add(new Unanimous());
         $this->context->set('rules', $this->rules);
-
-        $this->strategies = new StrategyStore();
-        $this->strategies->add(new Partial());
-        $this->strategies->add(new Unanimous());
     }
 
     /**
@@ -67,19 +60,11 @@ class Progressive
             return $config;
         }
 
-        // The feature's configuration is composed of a rule or rules within a strategy
+        // The feature's configuration is composed of a rule
         if (is_array($config) && !empty($config)) {
             reset($config);
             $name = key($config);
 
-            if ($this->strategies->exists($name)) {
-                $strategy = $this->strategies->get($name);
-                $rules    = $config[$name];
-                return $strategy->decide($this->context, $rules);
-            }
-
-            // No strategy defined
-            // The feature's configuration is only composed by one rule
             if ($this->rules->exists($name)) {
                 $rule   = $this->rules->get($name);
                 $params = $config[$name];

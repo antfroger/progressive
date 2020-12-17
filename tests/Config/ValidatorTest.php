@@ -31,7 +31,7 @@ final class ValidatorTest extends TestCase
         ]);
     }
 
-    public function testFeatureWithMoreThanOneRuleOrStartegyMustThrowAnException():void
+    public function testFeatureWithMoreThanOneRuleMustThrowAnException():void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([

@@ -1,18 +1,15 @@
 <?php
 
-namespace Progressive\Strategy;
+namespace Progressive\Rule;
 
-use Progressive\Context;
 use Progressive\ParameterBagInterface;
-use Progressive\Rule\RuleInterface;
-use Progressive\Rule\RuleStoreInterface;
 
-class Partial implements StrategyInterface
+class Partial implements RuleInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function decide(ParameterBagInterface $bag, array $rules):bool
+    public function decide(ParameterBagInterface $bag, array $rules = []):bool
     {
         /** @var RuleStoreInterface $store */
         $store = $bag->get('rules');
