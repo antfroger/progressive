@@ -16,39 +16,6 @@ final class ProgressiveTest extends TestCase
         self::$defaultConfigFile = require __DIR__ . '/feature-flag.php';
     }
 
-    public function testConfigIsValid():void
-    {
-        $this->assertInstanceOf(
-            Progressive::class,
-            new Progressive([
-                'features' => []
-            ])
-        );
-    }
-
-    public function testEmptyConfigMustThrowAnException():void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Progressive([]);
-    }
-
-    public function testInvalidRootKeyInConfigMustThrowAnException():void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Progressive([
-            'my-key' => []
-        ]);
-    }
-
-    public function testTwoManyRootKeyInConfigMustThrowAnException():void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        new Progressive([
-            'features' => [],
-            'more-keys',
-        ]);
-    }
-
     public function testAFeatureThatNotExistsMustReturnFalse():void
     {
         $progressive = new Progressive(self::$defaultConfigFile);

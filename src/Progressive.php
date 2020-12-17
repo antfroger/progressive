@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Progressive;
 
+use Progressive\Config\Validator;
 use Progressive\ParameterBagInterface;
 use Progressive\Rule\Enabled;
 use Progressive\Rule\RuleStore;
@@ -35,7 +36,7 @@ class Progressive
         array $config,
         ParameterBagInterface $context = null
     ) {
-        $this->validateConfig($config);
+        Validator::validate($config);
 
         $this->features = $config['features'];
         $this->context  = $context ?: new Context();
@@ -97,21 +98,5 @@ class Progressive
     public function addCustomRule(string $name, callable $func)
     {
         $this->rules->addCustom($name, $func);
-    }
-
-    /**
-     * @param  array $config
-     * @return void
-     */
-    private function validateConfig(array $config)
-    {
-        if (!array_key_exists('features', $config)) {
-            throw new \InvalidArgumentException('Param $config must contain the key "features"');
-        }
-        if (count($config) > 1) {
-            throw new \InvalidArgumentException('Param $config must only contain the key "features"');
-        }
-
-        // @todo check the config
     }
 }
