@@ -9,7 +9,7 @@ class Partial implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function decide(ParameterBagInterface $bag, array $rules = []):bool
+    public function decide(ParameterBagInterface $bag, array $rules = []): bool
     {
         /** @var StoreInterface $store */
         $store = $bag->get('rules');
@@ -27,8 +27,8 @@ class Partial implements RuleInterface
     /**
      * {@inheritdoc}
      */
-    public function getName():string
+    public function getName(): string
     {
-        return "partial";
+        return 'partial';
     }
 }

@@ -9,13 +9,9 @@ use Progressive\Exception\ValidateException;
 class Validator
 {
     /**
-     * @param  array $config
-     * @return void
-     *
      * @throws \InvalidArgumentException if the configuration is not valid
-     * @todo add exceptoin by error
      */
-    public static function validate(array $config):void
+    public static function validate(array $config): void
     {
         // Only one root key: features
         if (!array_key_exists('features', $config)) {

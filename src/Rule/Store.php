@@ -19,7 +19,7 @@ class Store implements StoreInterface
     /**
      * {@inheritdoc}
      */
-    public function add(RuleInterface $rule):void
+    public function add(RuleInterface $rule): void
     {
         $ruleName = $rule->getName();
         if ($this->exists($ruleName)) {
@@ -35,7 +35,7 @@ class Store implements StoreInterface
     /**
      * {@inheritdoc}
      */
-    public function addCustom(string $name, callable $rule):void
+    public function addCustom(string $name, callable $rule): void
     {
         $this->add(new Custom($name, $rule));
     }
@@ -57,17 +57,15 @@ class Store implements StoreInterface
     /**
      * {@inheritdoc}
      */
-    public function exists(string $name):bool
+    public function exists(string $name): bool
     {
         return array_key_exists($name, $this->rules);
     }
 
     /**
-     * Load default Rules
-     *
-     * @return void
+     * Load default Rules.
      */
-    protected function load():void
+    protected function load(): void
     {
         $this->add(new Enabled());
         $this->add(new Partial());

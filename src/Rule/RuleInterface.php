@@ -7,17 +7,12 @@ use Progressive\ParameterBagInterface;
 interface RuleInterface
 {
     /**
-     * Returns the rule name
-     *
-     * @return string
+     * Returns the rule name.
      */
-    public function getName():string;
+    public function getName(): string;
 
     /**
-     * Decides whether the feature is enabled or not
-     *
-     * @param  ParameterBagInterface $bag
-     * @return bool
+     * Decides whether the feature is enabled or not.
      */
-    public function decide(ParameterBagInterface $bag):bool;
+    public function decide(ParameterBagInterface $bag): bool;
 }

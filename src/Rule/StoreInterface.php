@@ -11,31 +11,30 @@ interface StoreInterface
     /**
      * Adds a RuleInterface rule.
      *
-     * @param RuleInterface $rule The RuleInterface object.
-     * @return void
+     * @param RuleInterface $rule the RuleInterface object
      *
      * @throws \LogicException if the rule has already been added
      */
-    public function add(RuleInterface $rule):void;
+    public function add(RuleInterface $rule): void;
 
     /**
      * Adds a custom rule.
      *
-     * @param string   $name The rule name.
-     * @param callable $rule The rule function.
-     * @return void
+     * @param string   $name the rule name
+     * @param callable $rule the rule function
      *
      * @throws \LogicException if the rule has already been added
      */
-    public function addCustom(string $name, callable $rule):void;
+    public function addCustom(string $name, callable $rule): void;
 
     /**
      * Gets a rule.
      *
-     * @param  string        The rule name.
-     * @return RuleInterface The rule.
+     * @param  string        the rule name
      *
      * @throws RuleNotFoundException if the rule is not defined
+     *
+     * @return RuleInterface the rule
      */
     public function get(string $name): RuleInterface;
 
@@ -43,7 +42,8 @@ interface StoreInterface
      * Returns whether a rule is defined.
      *
      * @param string $name The rule name
+     *
      * @return bool true if the rule name is defined, false otherwise
      */
-    public function exists(string $name):bool;
+    public function exists(string $name): bool;
 }

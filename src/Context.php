@@ -11,10 +11,6 @@ class Context implements ParameterBagInterface
     /** @var array */
     private $parameters = [];
 
-    /**
-     * @param  array $parameters
-     * @return void
-     */
     public function __construct(array $parameters = [])
     {
         $this->add($parameters);
@@ -23,7 +19,7 @@ class Context implements ParameterBagInterface
     /**
      * {@inheritdoc}
      */
-    public function add(array $parameters):void
+    public function add(array $parameters): void
     {
         foreach ($parameters as $key => $value) {
             $this->set($key, $value);
@@ -33,7 +29,7 @@ class Context implements ParameterBagInterface
     /**
      * {@inheritdoc}
      */
-    public function set(string $name, $value):void
+    public function set(string $name, $value): void
     {
         $this->parameters[$name] = $value;
     }

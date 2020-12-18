@@ -15,7 +15,8 @@ final class StoreTest extends TestCase
 
         $rule = $this->createMock(RuleInterface::class);
         $rule->method('getName')
-            ->willReturn('ruleinterface');
+            ->willReturn('ruleinterface')
+        ;
 
         $store->add($rule);
 

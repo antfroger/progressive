@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Progressive\Context;
-use Progressive\Progressive;
 
 final class ContextTest extends TestCase
 {
     /**
      * @dataProvider valueProvider
+     *
+     * @param mixed $value
      */
     public function testAddParams(string $name, $value): void
     {

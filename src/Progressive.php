@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Progressive;
 
 use Progressive\Config\Validator;
-use Progressive\ParameterBagInterface;
 use Progressive\Rule\Store;
 use Progressive\Rule\StoreInterface;
 
@@ -21,7 +20,6 @@ class Progressive
     private $store;
 
     /**
-     * @param array                 $config
      * @param ParameterBagInterface $context
      * @param StoreInterface        $store
      */
@@ -33,16 +31,12 @@ class Progressive
         Validator::validate($config);
 
         $this->features = $config['features'];
-        $this->context  = $context ?: new Context();
+        $this->context = $context ?: new Context();
 
         $this->store = $store ?: new Store();
         $this->context->set('rules', $this->store);
     }
 
-    /**
-     * @param  string $feature
-     * @return bool
-     */
     public function isEnabled(string $feature): bool
     {
         if (!array_key_exists($feature, $this->features)) {
@@ -62,8 +56,9 @@ class Progressive
             $name = key($config);
 
             if ($this->store->exists($name)) {
-                $rule   = $this->store->get($name);
+                $rule = $this->store->get($name);
                 $params = $config[$name];
+
                 return $rule->decide($this->context, $params);
             }
         }
@@ -71,11 +66,6 @@ class Progressive
         return false;
     }
 
-    /**
-     * @param  string   $name
-     * @param  callable $func
-     * @return void
-     */
     public function addCustomRule(string $name, callable $func)
     {
         $this->store->addCustom($name, $func);

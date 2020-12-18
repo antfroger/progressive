@@ -8,21 +8,21 @@ use Progressive\Exception\ValidateException;
 
 final class ValidatorTest extends TestCase
 {
-    public function testEmptyConfigMustThrowAnException():void
+    public function testEmptyConfigMustThrowAnException(): void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([]);
     }
 
-    public function testInvalidRootKeyInConfigMustThrowAnException():void
+    public function testInvalidRootKeyInConfigMustThrowAnException(): void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([
-            'my-key' => []
+            'my-key' => [],
         ]);
     }
 
-    public function testTwoManyRootKeyInConfigMustThrowAnException():void
+    public function testTwoManyRootKeyInConfigMustThrowAnException(): void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([
@@ -31,7 +31,7 @@ final class ValidatorTest extends TestCase
         ]);
     }
 
-    public function testFeatureWithMoreThanOneRuleMustThrowAnException():void
+    public function testFeatureWithMoreThanOneRuleMustThrowAnException(): void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([
@@ -58,12 +58,12 @@ final class ValidatorTest extends TestCase
         ]);
     }
 
-    public function testConfigIsValid():void
+    public function testConfigIsValid(): void
     {
         $this->expectNotToPerformAssertions();
 
         Validator::validate([
-            'features' => []
+            'features' => [],
         ]);
 
         Validator::validate([
