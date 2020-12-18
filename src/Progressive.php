@@ -6,11 +6,8 @@ namespace Progressive;
 
 use Progressive\Config\Validator;
 use Progressive\ParameterBagInterface;
-use Progressive\Rule\Enabled;
-use Progressive\Rule\Partial;
-use Progressive\Rule\RuleStore;
-use Progressive\Rule\RuleStoreInterface;
-use Progressive\Rule\Unanimous;
+use Progressive\Rule\Store;
+use Progressive\Rule\StoreInterface;
 
 class Progressive
 {
@@ -20,27 +17,26 @@ class Progressive
     /** @var ParameterBagInterface */
     private $context;
 
-    /** @var RuleStoreInterface */
-    private $rules;
+    /** @var StoreInterface */
+    private $store;
 
     /**
-     * @param array                  $config
-     * @param ParameterBagInterface  $context
+     * @param array                 $config
+     * @param ParameterBagInterface $context
+     * @param StoreInterface        $store
      */
     public function __construct(
         array $config,
-        ParameterBagInterface $context = null
+        ?ParameterBagInterface $context = null,
+        ?StoreInterface $store = null
     ) {
         Validator::validate($config);
 
         $this->features = $config['features'];
         $this->context  = $context ?: new Context();
 
-        $this->rules = new RuleStore();
-        $this->rules->add(new Enabled());
-        $this->rules->add(new Partial());
-        $this->rules->add(new Unanimous());
-        $this->context->set('rules', $this->rules);
+        $this->store = $store ?: new Store();
+        $this->context->set('rules', $this->store);
     }
 
     /**
@@ -65,8 +61,8 @@ class Progressive
             reset($config);
             $name = key($config);
 
-            if ($this->rules->exists($name)) {
-                $rule   = $this->rules->get($name);
+            if ($this->store->exists($name)) {
+                $rule   = $this->store->get($name);
                 $params = $config[$name];
                 return $rule->decide($this->context, $params);
             }
@@ -82,6 +78,6 @@ class Progressive
      */
     public function addCustomRule(string $name, callable $func)
     {
-        $this->rules->addCustom($name, $func);
+        $this->store->addCustom($name, $func);
     }
 }

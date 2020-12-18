@@ -6,10 +6,15 @@ namespace Progressive\Rule;
 
 use Progressive\Exception\RuleNotFoundException;
 
-class RuleStore implements RuleStoreInterface
+class Store implements StoreInterface
 {
     /** @var array<RuleInterface> */
     private $rules = [];
+
+    final public function __construct()
+    {
+        $this->load();
+    }
 
     /**
      * {@inheritdoc}
@@ -55,5 +60,17 @@ class RuleStore implements RuleStoreInterface
     public function exists(string $name):bool
     {
         return array_key_exists($name, $this->rules);
+    }
+
+    /**
+     * Load default Rules
+     *
+     * @return void
+     */
+    protected function load():void
+    {
+        $this->add(new Enabled());
+        $this->add(new Partial());
+        $this->add(new Unanimous());
     }
 }

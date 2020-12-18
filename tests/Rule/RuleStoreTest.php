@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
-use Progressive\Rule\Custom;
 use Progressive\Rule\RuleInterface;
-use Progressive\Rule\RuleStore;
+use Progressive\Rule\Store;
 
-final class RuleStoreTest extends TestCase
+final class StoreTest extends TestCase
 {
     public function testSameRuleAddedTwiceMustThrowAnException()
     {
-        $store = new RuleStore();
+        $store = new Store();
 
         $rule = $this->createMock(RuleInterface::class);
         $rule->method('getName')
@@ -26,7 +25,7 @@ final class RuleStoreTest extends TestCase
 
     public function testRuleNotExistsMustThrowAnException()
     {
-        $store = new RuleStore();
+        $store = new Store();
         $store->addCustom('env', function () {
             return true;
         });

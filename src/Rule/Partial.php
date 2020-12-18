@@ -11,7 +11,7 @@ class Partial implements RuleInterface
      */
     public function decide(ParameterBagInterface $bag, array $rules = []):bool
     {
-        /** @var RuleStoreInterface $store */
+        /** @var StoreInterface $store */
         $store = $bag->get('rules');
         foreach ($rules as $name => $params) {
             if ($store->exists($name)) {

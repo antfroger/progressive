@@ -6,7 +6,7 @@ namespace Progressive\Rule;
 
 use Progressive\Exception\RuleNotFoundException;
 
-interface RuleStoreInterface
+interface StoreInterface
 {
     /**
      * Adds a RuleInterface rule.
