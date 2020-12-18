@@ -235,14 +235,20 @@ In this example, we use the Symfony Yaml component to read the config from a YAM
 ```php
 use Symfony\Component\Yaml\Yaml;
 
-$config = Yaml::parseFile('/path/to/your/config/file.yaml');
+$config = Yaml::parseFile('/your-own-config-file.yaml');
+// Content of /your-own-config-file.yaml
+// features:
+//   new-feature: false
 $progressive = new Progressive($config);
 $progressive->isEnabled('new-feature'); // false
 ```
 
-Imagine that you are able to deploy the config files independently from your code base, you could release a new feature withtout having to deploy all your code base, by redeploying only `/path/to/your/config/file.yaml`.
+Imagine that you are able to deploy the config files independently from your code base, you could release a new feature without having to deploy all your code base, by redeploying only `/your-own-config-file.yaml`.
 
 ```php
+// Content of /your-own-config-file.yaml
+// features:
+//   new-feature: true
 $progressive->isEnabled('new-feature'); // true
 ```
 
