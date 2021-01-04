@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Progressive\Context;
+use Progressive\Exception\RuleNotFoundException;
 use Progressive\Progressive;
 
 final class ProgressiveTest extends TestCase
@@ -99,6 +100,32 @@ final class ProgressiveTest extends TestCase
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
         $this->assertSame($progressive->isEnabled('strategy-partial-all-false'), false);
+    }
+
+    public function testARuleThatNotExistsMustThrowAnException(): void
+    {
+        $this->expectException(RuleNotFoundException::class);
+
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $progressive->isEnabled('i-am-misconfigured');
+    }
+
+    public function testStrategyUnanimousWithMissingRulesMustThrowAnException(): void
+    {
+        $this->expectException(RuleNotFoundException::class);
+
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $progressive->isEnabled('strategy-unanimous-misconfigured');
+    }
+
+    public function testStrategyPartialWithMissingRulesMustThrowAnException(): void
+    {
+        $this->expectException(RuleNotFoundException::class);
+
+        $progressive = new Progressive(self::$defaultConfigFile);
+        $this->addCustomRulesForStategyTests($progressive);
+        $progressive->isEnabled('strategy-partial-misconfigured');
     }
 
     private function addCustomRulesForStategyTests(Progressive $progressive): void

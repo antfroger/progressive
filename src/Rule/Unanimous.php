@@ -14,10 +14,8 @@ class Unanimous implements RuleInterface
         /** @var StoreInterface $store */
         $store = $bag->get('rules');
         foreach ($rules as $name => $params) {
-            if ($store->exists($name)) {
-                if (false === $store->get($name)->decide($bag, $params)) {
-                    return false;
-                }
+            if (false === $store->get($name)->decide($bag, $params)) {
+                return false;
             }
         }
 

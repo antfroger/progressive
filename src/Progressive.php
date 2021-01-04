@@ -55,12 +55,10 @@ class Progressive
             reset($config);
             $name = key($config);
 
-            if ($this->store->exists($name)) {
-                $rule = $this->store->get($name);
-                $params = $config[$name];
+            $rule = $this->store->get($name);
+            $params = $config[$name];
 
-                return $rule->decide($this->context, $params);
-            }
+            return $rule->decide($this->context, $params);
         }
 
         return false;
