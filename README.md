@@ -9,8 +9,8 @@ Thanks to Progressive, you can **progressively**, **quickly** and **simply** ena
 
 ## Installation
 
-```bash
-    composer require antfroger/progressive
+```console
+$ composer require antfroger/progressive
 ```
 
 ## Usage
@@ -135,7 +135,7 @@ This strategy can be defined as an **AND**.
 ### `partial: []`
 
 `partial` enables the feature if only **one** of the conditions is met.  
-Rules are evaluated one by one. The feature is enables as soon as one rule is true.  
+Rules are evaluated one by one. The feature is enabled as soon as one rule is true.  
 The value is meant to be an array of [rules](#rules).
 
 ```php
@@ -253,6 +253,10 @@ $progressive->isEnabled('new-feature'); // true
 ```
 
 You may also want to store the configuration in a database and pass it as an array to Progressive.
+
+## Progressive in your projects
+
+* Progressive is also available as a [Symfony bundle](https://github.com/antfroger/progressive-bundle)
 
 ---
 
