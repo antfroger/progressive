@@ -64,7 +64,12 @@ class Progressive
         return false;
     }
 
-    public function addCustomRule(string $name, callable $func)
+    public function all(): array
+    {
+        return $this->features;
+    }
+
+    public function addCustomRule(string $name, callable $func): void
     {
         $this->store->addCustom($name, $func);
     }
