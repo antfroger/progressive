@@ -63,6 +63,14 @@ class Store implements StoreInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function list(): array
+    {
+        return $this->rules;
+    }
+
+    /**
      * Load default Rules.
      */
     protected function load(): void

@@ -46,4 +46,11 @@ interface StoreInterface
      * @return bool true if the rule name is defined, false otherwise
      */
     public function exists(string $name): bool;
+
+    /**
+     * Lists the rules.
+     *
+     * @return RuleInterface[]
+     */
+    public function list(): array;
 }
