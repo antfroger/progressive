@@ -11,6 +11,7 @@ class Custom implements RuleInterface
 {
     /** @var string */
     private $name;
+
     /** @var callable */
     private $fn;
 
