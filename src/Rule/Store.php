@@ -16,9 +16,6 @@ class Store implements StoreInterface
         $this->load();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function add(RuleInterface $rule): void
     {
         $ruleName = $rule->getName();
@@ -32,17 +29,11 @@ class Store implements StoreInterface
         $this->rules[$ruleName] = $rule;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addCustom(string $name, callable $rule): void
     {
         $this->add(new Custom($name, $rule));
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(string $name): RuleInterface
     {
         if (!$this->exists($name)) {
@@ -54,17 +45,11 @@ class Store implements StoreInterface
         return $this->rules[$name];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function exists(string $name): bool
     {
         return array_key_exists($name, $this->rules);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function list(): array
     {
         return $this->rules;

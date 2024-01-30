@@ -24,7 +24,7 @@ final class StoreTest extends TestCase
 
         $store->add($rule);
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $store->add($rule);
     }
 

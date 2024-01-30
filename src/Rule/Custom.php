@@ -21,17 +21,11 @@ class Custom implements RuleInterface
         $this->fn = $fn;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function decide(ParameterBagInterface $bag, ...$params): bool
     {
         return call_user_func($this->fn, $bag, ...$params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->name;

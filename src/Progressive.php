@@ -19,10 +19,6 @@ class Progressive
     /** @var StoreInterface */
     private $store;
 
-    /**
-     * @param ParameterBagInterface $context
-     * @param StoreInterface        $store
-     */
     public function __construct(
         array $config,
         ?ParameterBagInterface $context = null,

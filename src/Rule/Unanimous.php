@@ -6,9 +6,6 @@ use Progressive\ParameterBagInterface;
 
 class Unanimous implements RuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function decide(ParameterBagInterface $bag, array $rules = []): bool
     {
         /** @var StoreInterface $store */
@@ -22,9 +19,6 @@ class Unanimous implements RuleInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'unanimous';

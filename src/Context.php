@@ -16,9 +16,6 @@ class Context implements ParameterBagInterface
         $this->add($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function add(array $parameters): void
     {
         foreach ($parameters as $key => $value) {
@@ -26,17 +23,11 @@ class Context implements ParameterBagInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function set(string $name, $value): void
     {
         $this->parameters[$name] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get(string $name)
     {
         if (!$this->has($name)) {
@@ -48,9 +39,6 @@ class Context implements ParameterBagInterface
         return $this->parameters[$name];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function has(string $name): bool
     {
         return array_key_exists($name, $this->parameters);

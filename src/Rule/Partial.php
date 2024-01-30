@@ -6,9 +6,6 @@ use Progressive\ParameterBagInterface;
 
 class Partial implements RuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function decide(ParameterBagInterface $bag, array $rules = []): bool
     {
         /** @var StoreInterface $store */
@@ -22,9 +19,6 @@ class Partial implements RuleInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return 'partial';

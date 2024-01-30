@@ -30,10 +30,10 @@ interface ParameterBagInterface
     /**
      * Gets a parameter.
      *
-     * @throws ParameterNotFoundException if the parameter is not defined
-     *
      * @return string The parameter name
      * @return mixed  The parameter value
+     *
+     * @throws ParameterNotFoundException if the parameter is not defined
      */
     public function get(string $name);
 

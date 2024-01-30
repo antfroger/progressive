@@ -32,9 +32,9 @@ interface StoreInterface
      *
      * @param  string        the rule name
      *
-     * @throws RuleNotFoundException if the rule is not defined
-     *
      * @return RuleInterface the rule
+     *
+     * @throws RuleNotFoundException if the rule is not defined
      */
     public function get(string $name): RuleInterface;
 
