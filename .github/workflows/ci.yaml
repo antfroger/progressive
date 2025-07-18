@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request]
+on: push
 
 env:
   PHPUNIT_FLAGS: "-v --coverage-text"
