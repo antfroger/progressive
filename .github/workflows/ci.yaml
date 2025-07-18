@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        php-versions: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        php-versions: ['8.1', '8.2', '8.3', '8.4']
 
     steps:
       - name: Checkout
@@ -32,14 +32,15 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: "Cache composer"
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.php-version }}-composer-
+            ${{ runner.os }}-${{ matrix.php-versions }}-composer-
 
       - name: Setup problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
