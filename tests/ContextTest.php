@@ -18,23 +18,23 @@ final class ContextTest extends TestCase
         $this->assertSame($value, $context->get($name));
     }
 
+    public function valueProvider(): array
+    {
+        return [
+            ['string', 'a context value'],
+            ['array', [1, 2, 3]],
+            ['associative array', ['name' => 'Chandler', 'roommate' => 'Joey', 'friend' => 'Ross']],
+            ['object', new stdClass()],
+            ['bool', false],
+            ['null', null],
+        ];
+    }
+
     public function testParamNotFoundMustThrowAnException(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
         $context = new Context(['feature2' => 'nice']);
         $context->get('feature1');
-    }
-
-    public function valueProvider(): array
-    {
-        return [
-            ['string', 'a context value'],
-            ['array', [1, 2, 3]],
-            ['associative array', ['name' => 'Chandler', 'roomate' => 'Joey', 'friend' => 'Ross']],
-            ['object', new stdClass()],
-            ['bool', false],
-            ['null', null],
-        ];
     }
 }
