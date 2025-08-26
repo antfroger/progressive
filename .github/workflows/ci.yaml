@@ -6,14 +6,24 @@ env:
   PHPUNIT_FLAGS: "-v --coverage-text"
 
 jobs:
-  test:
-    name: Progressive (PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }})
-    runs-on: ${{ matrix.operating-system }}
+  php-versions:
+    name: Lookup PHP versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.versions.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: antfroger/php-version-action@v1
+        id: versions
 
+  test:
+    name: Progressive (PHP ${{ matrix.php-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: php-versions
     strategy:
       matrix:
-        operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-        php-versions: ['8.1', '8.2', '8.3', '8.4']
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        php-version: ${{ fromJSON(needs.php-versions.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -22,7 +32,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php-versions }}
+          php-version: ${{ matrix.php-version }}
           coverage: xdebug
           tools: composer:v2
 
@@ -38,9 +48,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.php-versions }}-composer-${{ hashFiles('**/composer.lock') }}
+          key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.php-versions }}-composer-
+            ${{ runner.os }}-${{ matrix.php-version }}-composer-
 
       - name: Setup problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
