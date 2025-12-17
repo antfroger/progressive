@@ -4,16 +4,19 @@ updates:
     directory: "/"
     versioning-strategy: "increase-if-necessary"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     commit-message:
       prefix: "[composer] "
+    groups:
+      all:
+        patterns: ["*"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    commit-message:
+      prefix: "[actions] "
     groups:
       all-actions:
         patterns: [ "*" ]
-    commit-message:
-      prefix: "[actions] "
