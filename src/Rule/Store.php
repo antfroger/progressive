@@ -34,6 +34,9 @@ class Store implements StoreInterface
         $this->add(new Custom($name, $rule(...)));
     }
 
+    /**
+     * @throws RuleNotFoundException when the rule doesn't exist
+     */
     public function get(string $name): RuleInterface
     {
         if (!$this->exists($name)) {
@@ -57,6 +60,8 @@ class Store implements StoreInterface
 
     /**
      * Load default Rules.
+     *
+     * @throws \LogicException if a default rule is added twice
      */
     protected function load(): void
     {

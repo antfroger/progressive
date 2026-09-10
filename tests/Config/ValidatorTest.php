@@ -29,7 +29,7 @@ final class ValidatorTest extends TestCase
         $this->expectException(ValidateException::class);
         Validator::validate([
             'features' => [],
-            'more-keys',
+            'more-keys' => [],
         ]);
     }
 

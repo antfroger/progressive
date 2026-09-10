@@ -14,9 +14,9 @@ final readonly class Custom implements RuleInterface
     public function __construct(private string $name, private \Closure $fn) {}
 
     /** @param mixed ...$params Parameters specific to each custom rule */
-    public function decide(ParameterBagInterface $bag, ...$params): bool
+    public function decide(ParameterBagInterface $bag, mixed $params = null): bool
     {
-        return ($this->fn)($bag, ...$params);
+        return ($this->fn)($bag, $params);
     }
 
     public function getName(): string

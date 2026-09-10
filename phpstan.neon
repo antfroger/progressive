@@ -1,0 +1,19 @@
+parameters:
+    level: 8
+    paths:
+        - src
+        - tests
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true
+            tooWideThrowType: true
+        uncheckedExceptionClasses:
+            - LogicException
+            - InvalidArgumentException
+            - PHPUnit\Framework\ExpectationFailedException
+            - PHPUnit\Framework\MockObject\Exception
+            - PHPUnit\Event\NoPreviousThrowableException
+    ignoreErrors:
+        -
+            identifier: missingType.checkedException
+            path: tests

@@ -8,14 +8,20 @@ use Progressive\Exception\ParameterNotFoundException;
 
 class Context implements ParameterBagInterface
 {
-    /** @var array */
+    /** @var array<string, mixed> */
     private $parameters = [];
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function __construct(array $parameters = [])
     {
         $this->add($parameters);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function add(array $parameters): void
     {
         foreach ($parameters as $key => $value) {

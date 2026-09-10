@@ -12,12 +12,13 @@ use Progressive\Exception\ParameterNotFoundException;
 final class ContextTest extends TestCase
 {
     #[DataProvider('valueProvider')]
-    public function testAddParams(string $name, $value): void
+    public function testAddParams(string $name, mixed $value): void
     {
         $context = new Context([$name => $value]);
         $this->assertSame($value, $context->get($name));
     }
 
+    /** @return iterable<string, array{0: string, 1: mixed}> */
     public static function valueProvider(): iterable
     {
         yield 'a context value' => ['string', 'a context value'];

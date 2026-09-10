@@ -9,7 +9,9 @@ use Progressive\Exception\ValidateException;
 class Validator
 {
     /**
-     * @throws \InvalidArgumentException if the configuration is not valid
+     * @param array<array-key, mixed> $config The unvalidated configuration
+     *
+     * @throws ValidateException if the configuration is not valid
      */
     public static function validate(array $config): void
     {

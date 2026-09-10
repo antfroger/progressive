@@ -30,7 +30,7 @@ interface StoreInterface
     /**
      * Gets a rule.
      *
-     * @param  string        the rule name
+     * @param string $name the rule name
      *
      * @return RuleInterface the rule
      *

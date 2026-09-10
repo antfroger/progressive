@@ -9,9 +9,9 @@ use Progressive\ParameterBagInterface;
 final readonly class Enabled implements RuleInterface
 {
     /** @param bool $value Whether the rule is enabled or not. */
-    public function decide(ParameterBagInterface $bag, bool $value = false): bool
+    public function decide(ParameterBagInterface $bag, mixed $value = null): bool
     {
-        return $value;
+        return true === $value;
     }
 
     public function getName(): string

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Progressive;
 
 use Progressive\Config\Validator;
+use Progressive\Exception\RuleNotFoundException;
+use Progressive\Exception\ValidateException;
 use Progressive\Rule\Store;
 use Progressive\Rule\StoreInterface;
 
@@ -15,6 +17,8 @@ final class Progressive
 
     /**
      * @param array{features: array<string, mixed>} $config
+     *
+     * @throws ValidateException if the configuration is not valid
      */
     public function __construct(
         array $config,
@@ -26,6 +30,9 @@ final class Progressive
         $this->context->set('rules', $this->store);
     }
 
+    /**
+     * @throws RuleNotFoundException if a misconfigured feature references an unknown rule
+     */
     public function isEnabled(string $feature): bool
     {
         if (!array_key_exists($feature, $this->features)) {
@@ -53,6 +60,9 @@ final class Progressive
         return false;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function all(): array
     {
         return $this->features;

@@ -13,8 +13,6 @@ interface RuleInterface
 
     /**
      * Decides whether the feature is enabled or not.
-     *
-     * @param mixed ...$params Parameters specific to each rule implementation
      */
-    public function decide(ParameterBagInterface $bag): bool;
+    public function decide(ParameterBagInterface $bag, mixed $params = null): bool;
 }

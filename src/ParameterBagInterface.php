@@ -11,9 +11,7 @@ interface ParameterBagInterface
     /**
      * Adds parameters.
      *
-     * @param array $parameters An array of parameters
-     *
-     * @throws \LogicException if the parameter can not be added
+     * @param array<string, mixed> $parameters An array of parameters
      */
     public function add(array $parameters): void;
 
@@ -22,8 +20,6 @@ interface ParameterBagInterface
      *
      * @param string $name  The parameter name
      * @param mixed  $value The parameter value
-     *
-     * @throws \LogicException if the parameter can not be set
      */
     public function set(string $name, mixed $value): void;
 
