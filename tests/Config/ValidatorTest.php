@@ -24,7 +24,7 @@ final class ValidatorTest extends TestCase
         ]);
     }
 
-    public function testTwoManyRootKeyInConfigMustThrowAnException(): void
+    public function testSeveralRootKeysInConfigMustThrowAnException(): void
     {
         $this->expectException(ValidateException::class);
         Validator::validate([
@@ -38,20 +38,6 @@ final class ValidatorTest extends TestCase
         $this->expectException(ValidateException::class);
         Validator::validate([
             'features' => [
-                'an-awesome-feature' => true,
-                'feature-with-built-in-rule' => [
-                    'enabled' => false,
-                ],
-                'feature-with-custom-rule' => [
-                    'runtime-env' => ['DEV', 'TEST'],
-                ],
-                'feature-with-anonimous-strategy' => [
-                    'unanimous' => [
-                        'rule1' => ['param1', 'param2'],
-                        'rule2' => 'param',
-                    ],
-                ],
-                'an-unconfigured-feature' => '',
                 'invalid-feature' => [
                     'rule1' => ['param1', 'param2'],
                     'rule2' => 'param',
@@ -89,7 +75,39 @@ final class ValidatorTest extends TestCase
                         'rule2' => 'param',
                     ],
                 ],
-                'an-unconfigured-feature' => '',
+            ],
+        ]);
+    }
+
+    public function testFeatureWithInvalidValueTypeMustThrowAnException(): void
+    {
+        $this->expectException(ValidateException::class);
+
+        Validator::validate([
+            'features' => [
+                'a-string-feature' => '',
+            ],
+        ]);
+    }
+
+    public function testFeatureWithEmptyArrayMustThrowAnException(): void
+    {
+        $this->expectException(ValidateException::class);
+
+        Validator::validate([
+            'features' => [
+                'empty-feature' => [],
+            ],
+        ]);
+    }
+
+    public function testFeatureWithScalarIntValueMustThrowAnException(): void
+    {
+        $this->expectException(ValidateException::class);
+
+        Validator::validate([
+            'features' => [
+                'an-int-feature' => 42,
             ],
         ]);
     }

@@ -19,6 +19,7 @@ final class Progressive
      * @param array{features: array<string, mixed>} $config
      *
      * @throws ValidateException if the configuration is not valid
+     * @throws \LogicException   if the configuration contains a reserved key
      */
     public function __construct(
         array $config,
@@ -26,8 +27,16 @@ final class Progressive
         private StoreInterface $store = new Store(),
     ) {
         Validator::validate($config);
+
+        if ($this->context->has(StoreInterface::BAG_KEY)) {
+            throw new \LogicException(sprintf(
+                'Your Context contains a parameter "%s". This key is reserved by Progressive. Please rename your parameter.',
+                StoreInterface::BAG_KEY,
+            ));
+        }
+
         $this->features = $config['features'];
-        $this->context->set('rules', $this->store);
+        $this->context->set(StoreInterface::BAG_KEY, $this->store);
     }
 
     /**
@@ -48,8 +57,7 @@ final class Progressive
 
         // The feature's configuration is composed of a rule
         if (is_array($config) && !empty($config)) {
-            reset($config);
-            $name = key($config);
+            $name = array_key_first($config);
 
             $rule = $this->store->get($name);
             $params = $config[$name];

@@ -7,11 +7,8 @@ namespace Progressive\Tests\Rule;
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
 use Progressive\Rule\Custom;
-use Progressive\Rule\Enabled;
-use Progressive\Rule\Partial;
 use Progressive\Rule\RuleInterface;
 use Progressive\Rule\Store;
-use Progressive\Rule\Unanimous;
 
 final class StoreTest extends TestCase
 {
@@ -41,32 +38,36 @@ final class StoreTest extends TestCase
         $store->get('unknown-rule');
     }
 
-    public function testList(): void
+    public function testBuiltInRulesAreAlwaysLoaded(): void
     {
         $store = new Store();
 
-        $this->assertEquals(
-            [
-                'enabled' => new Enabled(),
-                'partial' => new Partial(),
-                'unanimous' => new Unanimous(),
-            ],
-            $store->list()
-        );
+        $this->assertTrue($store->exists('enabled'));
+        $this->assertTrue($store->exists('partial'));
+        $this->assertTrue($store->exists('unanimous'));
+    }
 
-        $envCallable = function (): bool {
-            return true;
-        };
-        $store->addCustom('env', $envCallable);
+    public function testExtraRulesAreAppendedAfterBuiltInOnes(): void
+    {
+        $store = new Store([new Custom('my-rule', fn () => true)]);
 
-        $this->assertEquals(
-            [
-                'enabled' => new Enabled(),
-                'partial' => new Partial(),
-                'unanimous' => new Unanimous(),
-                'env' => new Custom('env', $envCallable),
-            ],
-            $store->list()
-        );
+        self::assertTrue($store->exists('enabled'));
+        self::assertTrue($store->exists('my-rule'));
+    }
+
+    public function testEmptyExtraRulesMeansOnlyBuiltIns(): void
+    {
+        $store = new Store([]);
+
+        self::assertTrue($store->exists('enabled'));
+        self::assertTrue($store->exists('partial'));
+        self::assertTrue($store->exists('unanimous'));
+    }
+
+    public function testExtraRuleCannotOverrideABuiltIn(): void
+    {
+        $this->expectException(\LogicException::class);
+
+        new Store([new Custom('enabled', fn () => true)]);
     }
 }

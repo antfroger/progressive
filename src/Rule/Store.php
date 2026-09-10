@@ -6,14 +6,22 @@ namespace Progressive\Rule;
 
 use Progressive\Exception\RuleNotFoundException;
 
-class Store implements StoreInterface
+final class Store implements StoreInterface
 {
-    /** @var array<RuleInterface> */
-    private $rules = [];
+    /** @var array<string, RuleInterface> */
+    private array $rules = [];
 
-    final public function __construct()
+    /**
+     * @param array<int, RuleInterface> $extraRules Additional rules, appended to the built-in ones (always loaded)
+     */
+    public function __construct(array $extraRules = [])
     {
-        $this->load();
+        foreach ($this->getBuiltInRules() as $rule) {
+            $this->add($rule);
+        }
+        foreach ($extraRules as $rule) {
+            $this->add($rule);
+        }
     }
 
     public function add(RuleInterface $rule): void
@@ -53,20 +61,9 @@ class Store implements StoreInterface
         return array_key_exists($name, $this->rules);
     }
 
-    public function list(): array
+    /** @return RuleInterface[] */
+    private function getBuiltInRules(): array
     {
-        return $this->rules;
-    }
-
-    /**
-     * Load default Rules.
-     *
-     * @throws \LogicException if a default rule is added twice
-     */
-    protected function load(): void
-    {
-        $this->add(new Enabled());
-        $this->add(new Partial());
-        $this->add(new Unanimous());
+        return [new Enabled(), new Partial(), new Unanimous()];
     }
 }

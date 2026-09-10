@@ -11,7 +11,7 @@ use Progressive\ParameterBagInterface;
 final readonly class Unanimous implements RuleInterface
 {
     /**
-     * @param mixed $rules Map of rule names to their parameters
+     * @param null|array<string, mixed> $rules Map of rule names to their parameters
      *
      * @throws RuleNotFoundException      if a nested rule does not exist
      * @throws ParameterNotFoundException if a required parameter is missing
@@ -20,8 +20,9 @@ final readonly class Unanimous implements RuleInterface
     {
         $rules = is_array($rules) ? $rules : [];
 
-        /** @var StoreInterface $store */
-        $store = $bag->get('rules');
+        $store = $bag->get(StoreInterface::BAG_KEY);
+        assert($store instanceof StoreInterface);
+
         foreach ($rules as $name => $params) {
             if (false === $store->get($name)->decide($bag, $params)) {
                 return false;
