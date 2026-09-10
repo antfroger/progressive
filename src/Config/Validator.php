@@ -24,15 +24,21 @@ class Validator
         }
 
         // As many features as needed
-        // Each feature must have only one key: a rule or a strategy
+        // Each feature must be either:
+        // - a boolean (short enabled/disabled syntax)
+        // - an array containing exactly one rule or strategy
         foreach ($config['features'] as $feature => $ruleOrStrategy) {
-            if (is_countable($ruleOrStrategy) && count($ruleOrStrategy) > 1) {
-                throw new ValidateException(sprintf(
-                    'A feature cannot contain more than one rule or strategy. Feature "%s" contains %d',
-                    $feature,
-                    count($ruleOrStrategy)
-                ));
+            if (is_bool($ruleOrStrategy)) {
+                continue;
             }
+            if (is_array($ruleOrStrategy) && 1 === count($ruleOrStrategy)) {
+                continue;
+            }
+
+            throw new ValidateException(sprintf(
+                'Feature "%s" must be a boolean or an array containing exactly one rule or strategy',
+                $feature
+            ));
         }
     }
 }

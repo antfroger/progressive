@@ -10,7 +10,6 @@ return [
         'disabled-verbose-syntax' => [
             'enabled' => false,
         ],
-        'i-am-not-configured' => '',
         'i-am-misconfigured' => [
             'unknown-rule' => null,
         ],
