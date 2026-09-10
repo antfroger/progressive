@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Progressive\Rule;
 
 use Progressive\ParameterBagInterface;
@@ -7,23 +9,14 @@ use Progressive\ParameterBagInterface;
 /**
  * Rule used to create RuleInterface objects from custom rules.
  */
-class Custom implements RuleInterface
+final readonly class Custom implements RuleInterface
 {
-    /** @var string */
-    private $name;
+    public function __construct(private string $name, private \Closure $fn) {}
 
-    /** @var callable */
-    private $fn;
-
-    public function __construct(string $name, callable $fn)
+    /** @param mixed ...$params Parameters specific to each custom rule */
+    public function decide(ParameterBagInterface $bag, mixed $params = null): bool
     {
-        $this->name = $name;
-        $this->fn = $fn;
-    }
-
-    public function decide(ParameterBagInterface $bag, ...$params): bool
-    {
-        return call_user_func($this->fn, $bag, ...$params);
+        return ($this->fn)($bag, $params);
     }
 
     public function getName(): string

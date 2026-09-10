@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Progressive\Tests\Rule;
+
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
 use Progressive\Rule\Custom;
@@ -13,7 +15,7 @@ use Progressive\Rule\Unanimous;
 
 final class StoreTest extends TestCase
 {
-    public function testSameRuleAddedTwiceMustThrowAnException()
+    public function testSameRuleAddedTwiceMustThrowAnException(): void
     {
         $store = new Store();
 
@@ -24,11 +26,11 @@ final class StoreTest extends TestCase
 
         $store->add($rule);
 
-        $this->expectException(LogicException::class);
+        $this->expectException(\LogicException::class);
         $store->add($rule);
     }
 
-    public function testRuleNotExistsMustThrowAnException()
+    public function testRuleNotExistsMustThrowAnException(): void
     {
         $store = new Store();
         $store->addCustom('env', function () {
@@ -39,7 +41,7 @@ final class StoreTest extends TestCase
         $store->get('unknown-rule');
     }
 
-    public function testList()
+    public function testList(): void
     {
         $store = new Store();
 

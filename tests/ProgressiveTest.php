@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Progressive\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Progressive\Context;
 use Progressive\Exception\RuleNotFoundException;
@@ -9,7 +11,7 @@ use Progressive\Progressive;
 
 final class ProgressiveTest extends TestCase
 {
-    /** @var array */
+    /** @var array{features: array<string, mixed>} */
     private static $defaultConfigFile;
 
     public static function setUpBeforeClass(): void
@@ -20,27 +22,28 @@ final class ProgressiveTest extends TestCase
     public function testAFeatureThatNotExistsMustReturnFalse(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
-        $this->assertSame(false, $progressive->isEnabled('i-do-not-exist'));
+        $this->assertFalse($progressive->isEnabled('i-do-not-exist'));
     }
 
     public function testAFeatureThatNotConfiguredMustReturnFalse(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
-        $this->assertSame(false, $progressive->isEnabled('i-am-not-configured'));
+        $this->assertFalse($progressive->isEnabled('i-am-not-configured'));
     }
 
     public function testBuiltInRuleEnabled(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
 
-        $this->assertSame(true, $progressive->isEnabled('enabled-short-syntax'));
-        $this->assertSame(false, $progressive->isEnabled('disabled-short-syntax'));
-        $this->assertSame(true, $progressive->isEnabled('enabled-verbose-syntax'));
-        $this->assertSame(false, $progressive->isEnabled('disabled-verbose-syntax'));
+        $this->assertTrue($progressive->isEnabled('enabled-short-syntax'));
+        $this->assertFalse($progressive->isEnabled('disabled-short-syntax'));
+        $this->assertTrue($progressive->isEnabled('enabled-verbose-syntax'));
+        $this->assertFalse($progressive->isEnabled('disabled-verbose-syntax'));
     }
 
     public function testCustomRulesCanBeAddedAndUsedAtRuntime(): void
     {
+        /** @param array<string, mixed> $features */
         $progressive = new Progressive(['features' => [
             'authorize' => ['custom-flag' => true],
             'refuse' => ['custom-flag' => false],
@@ -50,8 +53,8 @@ final class ProgressiveTest extends TestCase
             return $flag;
         });
 
-        $this->assertSame(true, $progressive->isEnabled('authorize'));
-        $this->assertSame(false, $progressive->isEnabled('refuse'));
+        $this->assertTrue($progressive->isEnabled('authorize'));
+        $this->assertFalse($progressive->isEnabled('refuse'));
     }
 
     public function testCustomRulesCanUseContext(): void
@@ -71,35 +74,35 @@ final class ProgressiveTest extends TestCase
             return in_array($context->get('env'), $envs);
         });
 
-        $this->assertSame(true, $progressive->isEnabled('everywhere-but-prod'));
+        $this->assertTrue($progressive->isEnabled('everywhere-but-prod'));
     }
 
     public function testStrategyUnanimousWithAllRulesTrueMustReturnTrue(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
-        $this->assertSame(true, $progressive->isEnabled('strategy-unanimous-all-true'));
+        $this->assertTrue($progressive->isEnabled('strategy-unanimous-all-true'));
     }
 
     public function testStrategyUnanimousWithAtLeastOneRuleFalseMustReturnFalse(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
-        $this->assertSame(false, $progressive->isEnabled('strategy-unanimous-one-false'));
+        $this->assertFalse($progressive->isEnabled('strategy-unanimous-one-false'));
     }
 
     public function testStrategyPartialWithAtLeastOneRuleTrueMustReturnTrue(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
-        $this->assertSame(true, $progressive->isEnabled('strategy-partial-one-true'));
+        $this->assertTrue($progressive->isEnabled('strategy-partial-one-true'));
     }
 
     public function testStrategyPartialWithNoRulesTrueMustReturnFalse(): void
     {
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
-        $this->assertSame(false, $progressive->isEnabled('strategy-partial-all-false'));
+        $this->assertFalse($progressive->isEnabled('strategy-partial-all-false'));
     }
 
     public function testARuleThatNotExistsMustThrowAnException(): void

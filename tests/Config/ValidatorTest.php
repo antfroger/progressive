@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Progressive\Tests\Config;
+
 use PHPUnit\Framework\TestCase;
 use Progressive\Config\Validator;
 use Progressive\Exception\ValidateException;
@@ -27,7 +29,7 @@ final class ValidatorTest extends TestCase
         $this->expectException(ValidateException::class);
         Validator::validate([
             'features' => [],
-            'more-keys',
+            'more-keys' => [],
         ]);
     }
 

@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Progressive\Rule;
 
 use Progressive\ParameterBagInterface;
 
-class Enabled implements RuleInterface
+final readonly class Enabled implements RuleInterface
 {
-    public function decide(ParameterBagInterface $bag, bool $value = false): bool
+    /** @param bool $value Whether the rule is enabled or not. */
+    public function decide(ParameterBagInterface $bag, mixed $value = null): bool
     {
-        return $value;
+        return true === $value;
     }
 
     public function getName(): string

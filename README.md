@@ -4,13 +4,17 @@ Progressive is a feature flag library *(also called toggle, switch, ...)*.
 Thanks to Progressive, you can **progressively**, **quickly** and **simply** enable new features.
 (and just as quickly deactivate them in case of an emergency)
 
-[![Build Status](https://github.com/antfroger/progressive/workflows/CI/badge.svg)](https://github.com/antfroger/progressive)
+[![Build Status](https://github.com/antfroger/progressive/workflows/CI/badge.svg)](https://github.com/antfroger/progressive/actions/workflows/ci.yaml)
 [![Latest Stable Version](https://poser.pugx.org/antfroger/progressive/v/stable.png)](https://packagist.org/packages/antfroger/progressive "Latest Stable Version")
+
+## Requirements
+
+- PHP >= 8.2
 
 ## Installation
 
 ```console
-$ composer require antfroger/progressive
+composer require antfroger/progressive
 ```
 
 ## Usage
@@ -79,6 +83,8 @@ How would you be able to achieve that?
 
 With custom rules!
 
+The rule's closure receives the Context as first argument, and the value declared in the feature's config as second argument (whatever its type).
+
 ```php
 $config = [
     'features' => [
@@ -90,7 +96,7 @@ $config = [
 $progressive = new Progressive($config);
 
 $progressive->addCustomRule('env', function (Context $context, array $envs) {
-    return in_array(getenv('ENV'), $envs);
+    return in_array(getenv('ENV'), $envs, true);
 });
 
 $progressive->isEnabled('homepage-v123'); // Returns true if ENV is DEV or PREPROD, otherwise returns false
@@ -153,8 +159,8 @@ $config = [
 
 In this example, the interface to translate the app will be displayed:
 
-* in `DEV` and `PREPROD` environments (for all users)
-* for users having a role `ROLE_ADMIN` or `ROLE_TRANSLATOR`, regardless of the environment.
+- in `DEV` and `PREPROD` environments (for all users)
+- for users having a role `ROLE_ADMIN` or `ROLE_TRANSLATOR`, regardless of the environment.
 
 This strategy can be defined as an **OR**.
 
@@ -183,7 +189,7 @@ $config = [
 
 $progressive = new Progressive($config, $context);
 $progressive->addCustomRule('env', function (Context $context, array $envs) {
-    return in_array($context->get('env'), $envs);
+    return in_array($context->get('env'), $envs, true);
 });
 ```
 
@@ -204,7 +210,7 @@ $progressive = new Progressive($config, $context);
 $progressive->addCustomRule('roles', function (Context $context, array $roles) {
     $userRoles = $context->get('user')->getRoles();
     foreach ($roles as $role) {
-        if (in_array($role, $userRoles) {
+        if (in_array($role, $userRoles, true)) {
             return true;
         }
     }
@@ -253,10 +259,6 @@ $progressive->isEnabled('new-feature'); // true
 ```
 
 You may also want to store the configuration in a database and pass it as an array to Progressive.
-
-## Progressive in your projects
-
-* Progressive is also available as a [Symfony bundle](https://github.com/antfroger/progressive-bundle)
 
 ---
 
