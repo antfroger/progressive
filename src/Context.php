@@ -6,7 +6,7 @@ namespace Progressive;
 
 use Progressive\Exception\ParameterNotFoundException;
 
-class Context implements ParameterBagInterface
+final class Context implements ParameterBagInterface
 {
     /** @var array<string, mixed> */
     private $parameters = [];

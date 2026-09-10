@@ -53,17 +53,12 @@ class Store implements StoreInterface
         return array_key_exists($name, $this->rules);
     }
 
-    public function list(): array
-    {
-        return $this->rules;
-    }
-
     /**
      * Load default Rules.
      *
      * @throws \LogicException if a default rule is added twice
      */
-    protected function load(): void
+    private function load(): void
     {
         $this->add(new Enabled());
         $this->add(new Partial());

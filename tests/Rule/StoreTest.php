@@ -6,12 +6,8 @@ namespace Progressive\Tests\Rule;
 
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
-use Progressive\Rule\Custom;
-use Progressive\Rule\Enabled;
-use Progressive\Rule\Partial;
 use Progressive\Rule\RuleInterface;
 use Progressive\Rule\Store;
-use Progressive\Rule\Unanimous;
 
 final class StoreTest extends TestCase
 {
@@ -39,34 +35,5 @@ final class StoreTest extends TestCase
 
         $this->expectException(RuleNotFoundException::class);
         $store->get('unknown-rule');
-    }
-
-    public function testList(): void
-    {
-        $store = new Store();
-
-        $this->assertEquals(
-            [
-                'enabled' => new Enabled(),
-                'partial' => new Partial(),
-                'unanimous' => new Unanimous(),
-            ],
-            $store->list()
-        );
-
-        $envCallable = function (): bool {
-            return true;
-        };
-        $store->addCustom('env', $envCallable);
-
-        $this->assertEquals(
-            [
-                'enabled' => new Enabled(),
-                'partial' => new Partial(),
-                'unanimous' => new Unanimous(),
-                'env' => new Custom('env', $envCallable),
-            ],
-            $store->list()
-        );
     }
 }

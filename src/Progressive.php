@@ -48,8 +48,7 @@ final class Progressive
 
         // The feature's configuration is composed of a rule
         if (is_array($config) && !empty($config)) {
-            reset($config);
-            $name = key($config);
+            $name = array_key_first($config);
 
             $rule = $this->store->get($name);
             $params = $config[$name];

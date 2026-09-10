@@ -28,7 +28,7 @@ class Validator
         foreach ($config['features'] as $feature => $ruleOrStrategy) {
             if (is_countable($ruleOrStrategy) && count($ruleOrStrategy) > 1) {
                 throw new ValidateException(sprintf(
-                    'A feature cannot contain more than one rule or startegy. Feature "%s" contains %d',
+                    'A feature cannot contain more than one rule or strategy. Feature "%s" contains %d',
                     $feature,
                     count($ruleOrStrategy)
                 ));
