@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Progressive\Rule;
 
 use Progressive\ParameterBagInterface;
 
-class Partial implements RuleInterface
+final readonly class Partial implements RuleInterface
 {
+    /** @param array<string, mixed> $rules Map of rule names to their parameters */
     public function decide(ParameterBagInterface $bag, array $rules = []): bool
     {
         /** @var StoreInterface $store */

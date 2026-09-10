@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Progressive\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Progressive\Context;
 use Progressive\Exception\RuleNotFoundException;

@@ -8,28 +8,21 @@ use Progressive\Config\Validator;
 use Progressive\Rule\Store;
 use Progressive\Rule\StoreInterface;
 
-class Progressive
+final class Progressive
 {
-    /** @var array An array of the features' configuration */
+    /** @var array<string, mixed> An array of the features' configuration */
     private $features = [];
 
-    /** @var ParameterBagInterface */
-    private $context;
-
-    /** @var StoreInterface */
-    private $store;
-
+    /**
+     * @param array{features: array<string, mixed>} $config
+     */
     public function __construct(
         array $config,
-        ?ParameterBagInterface $context = null,
-        ?StoreInterface $store = null
+        private ParameterBagInterface $context = new Context(),
+        private StoreInterface $store = new Store(),
     ) {
         Validator::validate($config);
-
         $this->features = $config['features'];
-        $this->context = $context ?: new Context();
-
-        $this->store = $store ?: new Store();
         $this->context->set('rules', $this->store);
     }
 

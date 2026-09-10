@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Progressive\Tests\Rule;
+
 use PHPUnit\Framework\TestCase;
 use Progressive\Exception\RuleNotFoundException;
 use Progressive\Rule\Custom;
@@ -24,7 +26,7 @@ final class StoreTest extends TestCase
 
         $store->add($rule);
 
-        $this->expectException(LogicException::class);
+        $this->expectException(\LogicException::class);
         $store->add($rule);
     }
 

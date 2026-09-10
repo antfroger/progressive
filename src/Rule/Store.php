@@ -21,7 +21,7 @@ class Store implements StoreInterface
         $ruleName = $rule->getName();
         if ($this->exists($ruleName)) {
             throw new \LogicException(sprintf(
-                'Rule"%s" already added. You cannot add the same rule twice',
+                'Rule "%s" already added. You cannot add the same rule twice',
                 $ruleName
             ));
         }
@@ -31,7 +31,7 @@ class Store implements StoreInterface
 
     public function addCustom(string $name, callable $rule): void
     {
-        $this->add(new Custom($name, $rule));
+        $this->add(new Custom($name, $rule(...)));
     }
 
     public function get(string $name): RuleInterface

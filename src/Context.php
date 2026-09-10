@@ -23,12 +23,12 @@ class Context implements ParameterBagInterface
         }
     }
 
-    public function set(string $name, $value): void
+    public function set(string $name, mixed $value): void
     {
         $this->parameters[$name] = $value;
     }
 
-    public function get(string $name)
+    public function get(string $name): mixed
     {
         if (!$this->has($name)) {
             throw new ParameterNotFoundException(
