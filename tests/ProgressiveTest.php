@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Progressive\Context;
 use Progressive\Exception\RuleNotFoundException;
 use Progressive\Progressive;
+use Progressive\Rule\StoreInterface;
 
 final class ProgressiveTest extends TestCase
 {
@@ -129,6 +130,14 @@ final class ProgressiveTest extends TestCase
         $progressive = new Progressive(self::$defaultConfigFile);
         $this->addCustomRulesForStategyTests($progressive);
         $progressive->isEnabled('strategy-partial-misconfigured');
+    }
+
+    public function testReservedKeyInContextMustThrowAnException(): void
+    {
+        $this->expectException(\LogicException::class);
+
+        $context = new Context([StoreInterface::BAG_KEY => 'my-value']);
+        new Progressive(['features' => []], $context);
     }
 
     private function addCustomRulesForStategyTests(Progressive $progressive): void

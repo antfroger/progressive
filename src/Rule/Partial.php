@@ -21,7 +21,7 @@ final readonly class Partial implements RuleInterface
         $rules = is_array($rules) ? $rules : [];
 
         /** @var StoreInterface $store */
-        $store = $bag->get('rules');
+        $store = $bag->get(StoreInterface::BAG_KEY);
         foreach ($rules as $name => $params) {
             if (true === $store->get($name)->decide($bag, $params)) {
                 return true;

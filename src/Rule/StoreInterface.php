@@ -9,6 +9,12 @@ use Progressive\Exception\RuleNotFoundException;
 interface StoreInterface
 {
     /**
+     * @internal Reserved key used by Progressive — do not use this name for your own parameters.
+     * Key under which the store is registered in the user's Context
+     */
+    public const BAG_KEY = 'rules';
+
+    /**
      * Adds a RuleInterface rule.
      *
      * @param RuleInterface $rule the RuleInterface object
