@@ -4,7 +4,7 @@ Progressive is a feature flag library *(also called toggle, switch, ...)*.
 Thanks to Progressive, you can **progressively**, **quickly** and **simply** enable new features.
 (and just as quickly deactivate them in case of an emergency)
 
-[![Build Status](https://github.com/antfroger/progressive/workflows/CI/badge.svg)](https://github.com/antfroger/progressive)
+[![Build Status](https://github.com/antfroger/progressive/workflows/CI/badge.svg)](https://github.com/antfroger/progressive/actions/workflows/ci.yaml)
 [![Latest Stable Version](https://poser.pugx.org/antfroger/progressive/v/stable.png)](https://packagist.org/packages/antfroger/progressive "Latest Stable Version")
 
 ## Requirements

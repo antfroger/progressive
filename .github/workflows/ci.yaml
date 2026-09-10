@@ -6,7 +6,7 @@ permissions:
   contents: read
 
 env:
-  PHPUNIT_FLAGS: "-v --coverage-text"
+  PHPUNIT_FLAGS: "--coverage-text"
 
 jobs:
   php-versions:
