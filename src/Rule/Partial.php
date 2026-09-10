@@ -11,7 +11,7 @@ use Progressive\ParameterBagInterface;
 final readonly class Partial implements RuleInterface
 {
     /**
-     * @param mixed $rules Map of rule names to their parameters
+     * @param null|array<string, mixed> $rules Map of rule names to their parameters
      *
      * @throws RuleNotFoundException      if a nested rule does not exist
      * @throws ParameterNotFoundException if a required parameter is missing
